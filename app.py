@@ -11,9 +11,12 @@ def index():
 
 @app.route(r"/api/hello", methods=['GET'])
 def help():
+    response = requests.get('https://api64.ipify.org?format=json').json()
+
     visitor_name = request.args.get('visitor_name', default='Mark')
-    ip_address = " 192 "
-    city = " anambra "
+    ip_address = response["ip"]
+    location = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
+    city = location.get("city")
     temp = " 33 "
 
     response = {
