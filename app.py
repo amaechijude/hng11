@@ -23,25 +23,25 @@ def help():
         api_key = config('api_key')
         url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&APPID={api_key}"
         time.sleep(1)
-        response = requests.get(url).json()
-        temperature = response.get('main', {}).get('temp')
+        resp = requests.get(url).json()
+        temperature = resp.get('main', {}).get('temp')
         temperature_celsius = round(temperature - 273.15, 2)
     except:
         temperature_celsius = "Unknown"
 
 
-    response = {
+    output = {
             "client_ip": ip_address,
             "location": city,
             "greeting": f'Hello {visitor_name}, the temperature is {temperature_celsius} degrees celcius in {city}',
 
             }
-    return jsonify(response)
+    return jsonify(output)
 
 
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run()
 
 
