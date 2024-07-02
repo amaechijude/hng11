@@ -1,12 +1,12 @@
-import requests, random, json, time
-from flask import Flask,request,jsonify, redirect, url_for
-
+import requests, time
+from flask import Flask,request,jsonify,redirect
+from decouple import config
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    time.sleep(3)
+    time.sleep(1)
     return redirect('/api/hello')
 
 
@@ -18,12 +18,22 @@ def help():
     ip_address = response["ip"]
     location = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
     city = location.get("city")
-    temp = " 33 "
+
+    try:
+        api_key = config('api_key')
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&APPID={api_key}"
+        time.sleep(1)
+        response = requests.get(url).json()
+        temperature = response.get('main', {}).get('temp')
+        temperature_celsius = round(temperature - 273.15, 2)
+    except:
+        temperature_celsius = "Unknown"
+
 
     response = {
             "client_ip": ip_address,
             "location": city,
-            "s_greeting": f'Hello {visitor_name}, the temperature is {temp} degrees celcius in {city}',
+            "greeting": f'Hello {visitor_name}, the temperature is {temperature_celsius} degrees celcius in {city}',
 
             }
     return jsonify(response)
